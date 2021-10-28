@@ -7,9 +7,9 @@ app = FastAPI()
 
 from database import (
     fetch_one_reservation,
-    fetch_all_reservations,
+    fetch_all_reservation,
     create_reservation,
-    update_todo,
+    update_reservation,
     remove_reservation,
 )
 
@@ -25,38 +25,37 @@ app.add_middleware(
 
 @app.get("/")
 def read_root():
-    return {"Hello":"World"}
+    return {"Index":"Page"}
 
-@app.get("/reservations")
-async def get_reservations():
-    response = await fetch_all_reservations()
+@app.get("/reservation")
+async def get_reservation():
+    response = await fetch_all_reservation()
     return response
 
-@app.get("/reservations{phone}", response_model=Reservation)
-async def get_reservations_by_phone(phone):
+@app.get("/reservation{phone}", response_model=Reservation)
+async def get_reservation_by_phone(phone):
     response = await fetch_one_reservation(phone)
     if response:
         return response
-    raise HTTPException(404, "there is no TODO item with this phone {phone}")
+    raise HTTPException(404, f"there is no TODO item with this phone {phone}")
 
-@app.post("/reservations", response_model=Reservation)
-async def post_reservations(data:Reservation):
+@app.post("/reservation", response_model=Reservation)
+async def post_reservation(data:Reservation):
     response = await create_reservation(data.dict())
     if response:
         return response
     raise HTTPException(400, "Something went wrong / Bad request")
-    return {"POST":"Reservations"}
 
-@app.put("/reservations{phone}", response_model=Reservation)
-async def put_reservations(contact_name:str, contact_type:str, phone:str, birthdate:str, descriptions:str):
+@app.put("/reservation{phone}", response_model=Reservation)
+async def put_reservation(contact_name:str, contact_type:str, phone:str, birthdate:str, descriptions:str):
     response = await update_reservation(contact_name, contact_type, phone, birthdate, descriptions)
     if response:
         return response
     raise HTTPException(404, f"there is no TODO item with this phone {phone}")
 
-@app.delete("/reservations{phone}")
-async def delete_reservations(phone):
+@app.delete("/reservation{phone}")
+async def delete_reservation(phone):
     response = await remove_reservation(phone)
     if response:
-        return response
+        return "Succesfully deleted reservation item !"
     raise HTTPException(404, f"there is no TODO item with this phone {phone}")
